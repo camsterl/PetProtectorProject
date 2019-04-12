@@ -32,21 +32,23 @@ public class MainActivity extends ListActivity {
 
     public static final int RESULT_LOAD_IMAGE = 200;
     private ImageView petImageView;
-
-    private ListView petsListView;
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private ListView PetListView;
     private List<PetList> petList;
     private DBHelper db;
     private  PetListAdapter petListAdapter;
 
-    List<PetList> allPets;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+      setContentView(R.layout.activity_main);
 
-        petsListView = findViewById(R.id.PetListView);
-        setListAdapter(new PetListAdapter(this, R.layout.pet_list_item, allPets));
+        db = new DBHelper(this);
+
+      PetListView = findViewById(R.id.PetListView);
+        setListAdapter(new PetListAdapter(this, R.layout.pet_list_item, petList));
 
 
         //connect pet image view to layout
@@ -59,14 +61,14 @@ public class MainActivity extends ListActivity {
         petList = db.getAllPets();
         petListAdapter = new PetListAdapter(this, R.layout.pet_list_item, petList);
 
-        petsListView = findViewById(R.id.PetListView);
-        petsListView.setAdapter(petListAdapter);
+        PetListView = findViewById(R.id.PetListView);
+        PetListView.setAdapter(petListAdapter);
     }
 
     private static Uri getUritoResources(Context context, int id) {
         Resources res = context.getResources();
         String uri = ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + res.getResourcePackageName(id) + "/" + res.getResourceTypeName(id) + "/" + res.getResourceEntryName(id);
-        //android: resource: //edu.miracostacollege.cs134.petprotector/drawable/none
+
 
         return Uri.parse(uri);
     }
@@ -120,15 +122,16 @@ public class MainActivity extends ListActivity {
             Uri uri = data.getData();
             petImageView.setImageURI(uri);
         }
+    }
 
-      /*  public void viewGameDetails(View view) {
-            Game selectedGame = (Game) view.getTag();
+        public void viewPetDetails(View view) {
+            PetList selectedPet = (PetList) view.getTag();
 
-            Intent detailsIntent = new Intent(this, GameDetailsActivity.class);
-            detailsIntent.putExtra("SelectedGame", selectedGame);
+            Intent detailsIntent = new Intent(this, PetDetailsActivity.class);
+            detailsIntent.putExtra("SelectedPet", selectedPet);
 
             startActivity(detailsIntent);
-      */  }
+        }
 
         public void addPet(View v)
         {
@@ -139,18 +142,18 @@ public class MainActivity extends ListActivity {
 
             String name = nameEditText.getText().toString();
             String description = descriptionEditText.getText().toString();
-            int phone = phoneTextView.getText().toString();
+            int phone = Integer.parseInt(phoneTextView.getText().toString());
             if (TextUtils.isEmpty(name) || TextUtils.isEmpty(description))
             {
                 Toast.makeText(this, "Both name and description of the game must be provided.", Toast.LENGTH_LONG);
                 return;
             }
 
-            PetList newGame = new PetList(name, description, phone);
+            PetList newPet = new PetList(name, description, phone);
 
             // Add the new game to the database to ensure it is persisted.
-            db.addGame(newGame);
-            petListAdapter.add(newGame);
+            db.addPet(newPet);
+            petListAdapter.add(newPet);
             // Clear all the entries (reset them)
             nameEditText.setText("");
             descriptionEditText.setText("");

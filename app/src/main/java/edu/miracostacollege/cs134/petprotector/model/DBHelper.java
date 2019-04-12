@@ -77,7 +77,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public List<PetList> getAllPets() {
-        List<PetList> gameList = new ArrayList<>();
+        List<PetList> petList = new ArrayList<>();
         SQLiteDatabase database = getReadableDatabase();
         // A cursor is the results of a database query (what gets returned)
         Cursor cursor = database.query(
@@ -96,12 +96,12 @@ public class DBHelper extends SQLiteOpenHelper {
                                 cursor.getString(2),
                                 cursor.getInt(3),
                                 cursor.getString(4));
-                PetList.add(pet);
+                petList.add(pet);
             } while (cursor.moveToNext());
         }
         cursor.close();
         database.close();
-        return gameList;
+        return petList;
     }
 
 

@@ -3,7 +3,7 @@ package edu.miracostacollege.cs134.petprotector.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class PetList {
+public class PetList implements Parcelable {
 
     private long mId;
     private String mName;
@@ -21,11 +21,9 @@ public class PetList {
     }
 
 
-
     public PetList(String mName, String mDescription, int mPhone, String imageName) {
         this(-1, mName, mDescription, mPhone, imageName);
     }
-
 
 
     public PetList(long id, String name, String description, int phone, String imageName) {
@@ -35,6 +33,7 @@ public class PetList {
         mPhone = phone;
         mImageName = imageName;
     }
+
     public String getmName() {
         return mName;
     }
@@ -85,12 +84,12 @@ public class PetList {
                 '}';
     }
 
-    @Override
+
     public int describeContents() {
         return 0;
     }
 
-   @Override
+
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(mId);
         dest.writeString(mName);
