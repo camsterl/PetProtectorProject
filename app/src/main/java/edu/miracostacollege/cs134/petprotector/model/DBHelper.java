@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 + KEY_FIELD_ID + " INTEGER PRIMARY KEY, "
                 + FIELD_NAME + " TEXT, "
                 + FIELD_DESCRIPTION + " TEXT, "
-                + FIELD_PHONE + " INTEGER, "
+                + FIELD_PHONE + " TEXT, "
                 + FIELD_IMAGE_NAME + " TEXT" + ")";
         database.execSQL (table);
     }
@@ -50,7 +51,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     //********** DATABASE OPERATIONS:  ADD, UPDATE, EDIT, DELETE
 
-    public void addPet(PetList pet) {
+    public void addPet(Pet pet) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -64,7 +65,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(FIELD_PHONE, pet.getmPhone());
 
         //ADD KEY-VALUE PAIR INFORMATION FOR THE GAME RATING
-        values.put(FIELD_IMAGE_NAME, pet.getImageName());
+        values.put(FIELD_IMAGE_NAME, pet.getImageName().toString());
 
         // INSERT THE ROW IN THE TABLE
         long id = db.insert(DATABASE_TABLE, null, values);
@@ -76,8 +77,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public List<PetList> getAllPets() {
-        List<PetList> petList = new ArrayList<>();
+    public List<Pet> getAllPets() {
+        List<Pet> petList = new ArrayList<>();
         SQLiteDatabase database = getReadableDatabase();
         // A cursor is the results of a database query (what gets returned)
         Cursor cursor = database.query(
@@ -90,12 +91,12 @@ public class DBHelper extends SQLiteOpenHelper {
         //COLLECT EACH ROW IN THE TABLE
         if (cursor.moveToFirst()){
             do {
-                PetList pet =
-                        new PetList(cursor.getLong(0),
+                Pet pet =
+                        new Pet(cursor.getLong(0),
                                 cursor.getString(1),
                                 cursor.getString(2),
-                                cursor.getInt(3),
-                                cursor.getString(4));
+                                cursor.getString(3),
+                                Uri.parse( cursor.getString(4)));
                 petList.add(pet);
             } while (cursor.moveToNext());
         }

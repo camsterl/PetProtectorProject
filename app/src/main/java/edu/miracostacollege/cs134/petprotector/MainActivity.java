@@ -1,7 +1,6 @@
 package edu.miracostacollege.cs134.petprotector;
 
 import android.Manifest;
-import android.app.ListActivity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,24 +18,24 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RatingBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.miracostacollege.cs134.petprotector.model.DBHelper;
-import edu.miracostacollege.cs134.petprotector.model.PetList;
+import edu.miracostacollege.cs134.petprotector.model.Pet;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends AppCompatActivity {
 
     public static final int RESULT_LOAD_IMAGE = 200;
     private ImageView petImageView;
     private static final String TAG = MainActivity.class.getSimpleName();
     private ListView PetListView;
-    private List<PetList> petList;
+    private List<Pet> pet;
     private DBHelper db;
     private  PetListAdapter petListAdapter;
+    private Uri image;
 
 
 
@@ -46,9 +45,9 @@ public class MainActivity extends ListActivity {
       setContentView(R.layout.activity_main);
 
         db = new DBHelper(this);
-
+        pet = db.getAllPets();
       PetListView = findViewById(R.id.PetListView);
-        setListAdapter(new PetListAdapter(this, R.layout.pet_list_item, petList));
+        PetListView.setAdapter(new PetListAdapter(this, R.layout.pet_list_item, pet));
 
 
         //connect pet image view to layout
@@ -58,8 +57,8 @@ public class MainActivity extends ListActivity {
         petImageView.setImageURI(getUritoResources(this, R.drawable.none));
 
 
-        petList = db.getAllPets();
-        petListAdapter = new PetListAdapter(this, R.layout.pet_list_item, petList);
+        pet = db.getAllPets();
+        petListAdapter = new PetListAdapter(this, R.layout.pet_list_item, pet);
 
         PetListView = findViewById(R.id.PetListView);
         PetListView.setAdapter(petListAdapter);
@@ -118,14 +117,14 @@ public class MainActivity extends ListActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_LOAD_IMAGE) {
-            Uri uri = data.getData();
-            petImageView.setImageURI(uri);
+        if (requestCode == RESULT_LOAD_IMAGE) {
+            image = data.getData();
+            petImageView.setImageURI(image);
         }
     }
 
         public void viewPetDetails(View view) {
-            PetList selectedPet = (PetList) view.getTag();
+            Pet selectedPet = (Pet) view.getTag();
 
             Intent detailsIntent = new Intent(this, PetDetailsActivity.class);
             detailsIntent.putExtra("SelectedPet", selectedPet);
@@ -142,14 +141,15 @@ public class MainActivity extends ListActivity {
 
             String name = nameEditText.getText().toString();
             String description = descriptionEditText.getText().toString();
-            int phone = Integer.parseInt(phoneTextView.getText().toString());
+            String phone = phoneTextView.getText().toString();
+
             if (TextUtils.isEmpty(name) || TextUtils.isEmpty(description))
             {
                 Toast.makeText(this, "Both name and description of the game must be provided.", Toast.LENGTH_LONG);
                 return;
             }
 
-            PetList newPet = new PetList(name, description, phone);
+            Pet newPet = new Pet(name, description, phone, image);
 
             // Add the new game to the database to ensure it is persisted.
             db.addPet(newPet);

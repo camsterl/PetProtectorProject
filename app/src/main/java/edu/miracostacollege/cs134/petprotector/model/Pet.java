@@ -1,32 +1,28 @@
 package edu.miracostacollege.cs134.petprotector.model;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class PetList implements Parcelable {
+import java.net.URI;
+
+public class Pet implements Parcelable {
 
     private long mId;
     private String mName;
     private String mDescription;
-    private int mPhone;
-    private String mImageName;
-
-    public PetList() {
-        this(-1, "", "", 0, "none.png");
-    }
+    private String mPhone;
+    private Uri mImageName;
 
 
-    public PetList(String mName, String mDescription, int mPhone) {
-        this(-1, mName, mDescription, mPhone, "none.png");
-    }
 
 
-    public PetList(String mName, String mDescription, int mPhone, String imageName) {
+    public Pet(String mName, String mDescription, String mPhone, Uri imageName) {
         this(-1, mName, mDescription, mPhone, imageName);
     }
 
 
-    public PetList(long id, String name, String description, int phone, String imageName) {
+    public Pet(long id, String name, String description, String phone, Uri imageName) {
         mId = id;
         mName = name;
         mDescription = description;
@@ -58,19 +54,19 @@ public class PetList implements Parcelable {
         mDescription = description;
     }
 
-    public int getmPhone() {
+    public String getmPhone() {
         return mPhone;
     }
 
-    public void setmPhone(int phone) {
+    public void setmPhone(String phone) {
         mPhone = phone;
     }
 
-    public String getImageName() {
+    public Uri getImageName() {
         return mImageName;
     }
 
-    public void setImageName(String imageName) {
+    public void setImageName(Uri imageName) {
         mImageName = imageName;
     }
 
@@ -94,8 +90,8 @@ public class PetList implements Parcelable {
         dest.writeLong(mId);
         dest.writeString(mName);
         dest.writeString(mDescription);
-        dest.writeFloat(mPhone);
-        dest.writeString(mImageName);
+        dest.writeString(mPhone);
+        dest.writeString(mImageName.toString());
 
 
     }
@@ -103,25 +99,25 @@ public class PetList implements Parcelable {
     //mechanism to create(instantiate) a new Game object from a Parcel
     //private constructor to create a new Game from a parcel
 
-    private PetList(Parcel parcel) {
+    private Pet(Parcel parcel) {
         mId = parcel.readLong();
         mName = parcel.readString();
         mDescription = parcel.readString();
-        mPhone = parcel.readInt();
-        mImageName = parcel.readString();
+        mPhone = parcel.readString();
+        mImageName = Uri.parse(parcel.readString());
 
     }
 
-    public static final Parcelable.Creator<PetList> CREATOR = new Parcelable.Creator<PetList>() {
+    public static final Parcelable.Creator<Pet> CREATOR = new Parcelable.Creator<Pet>() {
         @Override
-        public PetList createFromParcel(Parcel source) {
-            return new PetList(source);
+        public Pet createFromParcel(Parcel source) {
+            return new Pet(source);
         }
 
 
         @Override
-        public PetList[] newArray(int size) {
-            return new PetList[size];
+        public Pet[] newArray(int size) {
+            return new Pet[size];
         }
     };
 

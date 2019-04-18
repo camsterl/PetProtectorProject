@@ -17,17 +17,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import edu.miracostacollege.cs134.petprotector.model.PetList;
+import edu.miracostacollege.cs134.petprotector.model.Pet;
 
-public class PetListAdapter extends ArrayAdapter<PetList> {
+public class PetListAdapter extends ArrayAdapter<Pet> {
 
     //declare member variables to store the params
     private Context mContext;
     private int mResourceId;
-    private List<PetList> mAllPets;
+    private List<Pet> mAllPets;
 
     //this constructor is being called  by MainActivity
-    public PetListAdapter(@NonNull Context context, int resource, @NonNull List<PetList> objects) {
+    public PetListAdapter(@NonNull Context context, int resource, @NonNull List<Pet> objects) {
         super(context, resource, objects);
         mContext = context;
         mResourceId = resource;
@@ -45,7 +45,7 @@ public class PetListAdapter extends ArrayAdapter<PetList> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         // inflate custom layout with data from List<MusicEvents>
 
-        PetList focusedEvent = mAllPets.get(position);
+        Pet focusedEvent = mAllPets.get(position);
 
         // manually inflate custom layout
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -66,18 +66,11 @@ public class PetListAdapter extends ArrayAdapter<PetList> {
         listDateTextView.setText(focusedEvent.getmPhone());
 
         //load pic
-        AssetManager am = mContext.getAssets();
 
-        try
-        {
-            InputStream stream = am.open(focusedEvent.getImageName());
-            Drawable image = Drawable.createFromStream(stream, "This is an image of " + focusedEvent.getmName());
-            //put image in
-            listItemImageView.setImageDrawable(image);
-        }
-        catch (IOException e) {
-            Log.e("Pet Protector", e.getMessage());
-        }
+
+
+            listItemImageView.setImageURI(focusedEvent.getImageName());
+
 
         //return customview with all information
         return customView;
